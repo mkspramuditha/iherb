@@ -1,0 +1,760 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Item
+ *
+ * @ORM\Table(name="item")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ItemRepository")
+ */
+class Item
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="itemId", type="integer", unique=true)
+     */
+    private $itemId;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="brandId", type="integer", nullable=true)
+     */
+    private $brandId;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="length", type="float", nullable=true)
+     */
+    private $length;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="width", type="float", nullable=true)
+     */
+    private $width;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="height", type="float", nullable=true)
+     */
+    private $height;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="weight", type="float", nullable=true)
+     */
+    private $weight;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shopify_variant_id", type="string", length=255,nullable=true)
+     */
+    private $shopifyVariantId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="shopify_product_id", type="string", length=255,nullable=true)
+     */
+    private $shopifyProductId;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="countryId", type="integer", nullable=true)
+     */
+    private $countryId;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="productId", type="integer")
+     */
+    private $productId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="sku", type="string", length=255, unique=true)
+     */
+    private $sku;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="listPrice", type="string", length=255)
+     */
+    private $listPrice;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="dealerPrice", type="string", length=255)
+     */
+    private $dealerPrice;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="supplierProductId", type="string", length=255, nullable=true)
+     */
+    private $supplierProductId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="upc", type="string", length=255, nullable=true)
+     */
+    private $upc;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", length=255, nullable=true)
+     */
+    private $type;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="createdAt", type="string", length=255)
+     */
+    private $createdAt;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="updatedAt", type="string", length=255)
+     */
+    private $updatedAt;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="quantity", type="integer")
+     */
+    private $quantity;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="vehicles", type="text", length=10000, nullable=true)
+     */
+    private $vehicles;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="image1", type="string", length=255, nullable=true)
+     */
+    private $image1;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="image2", type="string", length=255, nullable=true)
+     */
+    private $image2;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="image3", type="string", length=255, nullable=true)
+     */
+    private $image3;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set itemId
+     *
+     * @param integer $itemId
+     *
+     * @return Item
+     */
+    public function setItemId($itemId)
+    {
+        $this->itemId = $itemId;
+
+        return $this;
+    }
+
+    /**
+     * Get itemId
+     *
+     * @return int
+     */
+    public function getItemId()
+    {
+        return $this->itemId;
+    }
+
+    /**
+     * Set brandId
+     *
+     * @param integer $brandId
+     *
+     * @return Item
+     */
+    public function setBrandId($brandId)
+    {
+        $this->brandId = $brandId;
+
+        return $this;
+    }
+
+    /**
+     * Get brandId
+     *
+     * @return int
+     */
+    public function getBrandId()
+    {
+        return $this->brandId;
+    }
+
+    /**
+     * Set countryId
+     *
+     * @param integer $countryId
+     *
+     * @return Item
+     */
+    public function setCountryId($countryId)
+    {
+        $this->countryId = $countryId;
+
+        return $this;
+    }
+
+    /**
+     * Get countryId
+     *
+     * @return int
+     */
+    public function getCountryId()
+    {
+        return $this->countryId;
+    }
+
+    /**
+     * Set productId
+     *
+     * @param integer $productId
+     *
+     * @return Item
+     */
+    public function setProductId($productId)
+    {
+        $this->productId = $productId;
+
+        return $this;
+    }
+
+    /**
+     * Get productId
+     *
+     * @return int
+     */
+    public function getProductId()
+    {
+        return $this->productId;
+    }
+
+    /**
+     * Set sku
+     *
+     * @param string $sku
+     *
+     * @return Item
+     */
+    public function setSku($sku)
+    {
+        $this->sku = $sku;
+
+        return $this;
+    }
+
+    /**
+     * Get sku
+     *
+     * @return string
+     */
+    public function getSku()
+    {
+        return $this->sku;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Item
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set listPrice
+     *
+     * @param string $listPrice
+     *
+     * @return Item
+     */
+    public function setListPrice($listPrice)
+    {
+        $this->listPrice = $listPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get listPrice
+     *
+     * @return string
+     */
+    public function getListPrice()
+    {
+        return $this->listPrice;
+    }
+
+    /**
+     * Set supplierProductId
+     *
+     * @param string $supplierProductId
+     *
+     * @return Item
+     */
+    public function setSupplierProductId($supplierProductId)
+    {
+        $this->supplierProductId = $supplierProductId;
+
+        return $this;
+    }
+
+    /**
+     * Get supplierProductId
+     *
+     * @return string
+     */
+    public function getSupplierProductId()
+    {
+        return $this->supplierProductId;
+    }
+
+    /**
+     * Set upc
+     *
+     * @param string $upc
+     *
+     * @return Item
+     */
+    public function setUpc($upc)
+    {
+        $this->upc = $upc;
+
+        return $this;
+    }
+
+    /**
+     * Get upc
+     *
+     * @return string
+     */
+    public function getUpc()
+    {
+        return $this->upc;
+    }
+
+    /**
+     * Set createdAt
+     *
+     * @param string $createdAt
+     *
+     * @return Item
+     */
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get createdAt
+     *
+     * @return string
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set updatedAt
+     *
+     * @param string $updatedAt
+     *
+     * @return Item
+     */
+    public function setUpdatedAt($updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updatedAt
+     *
+     * @return string
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Set quantity
+     *
+     * @param integer $quantity
+     *
+     * @return Item
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
+     * Get quantity
+     *
+     * @return int
+     */
+    public function getQuantity()
+    {
+        return $this->quantity;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+    }
+
+    /**
+     * Set image1
+     *
+     * @param string $image1
+     *
+     * @return Item
+     */
+    public function setImage1($image1)
+    {
+        $this->image1 = $image1;
+
+        return $this;
+    }
+
+    /**
+     * Get image1
+     *
+     * @return string
+     */
+    public function getImage1()
+    {
+        return $this->image1;
+    }
+
+    /**
+     * Set image2
+     *
+     * @param string $image2
+     *
+     * @return Item
+     */
+    public function setImage2($image2)
+    {
+        $this->image2 = $image2;
+
+        return $this;
+    }
+
+    /**
+     * Get image2
+     *
+     * @return string
+     */
+    public function getImage2()
+    {
+        return $this->image2;
+    }
+
+    /**
+     * Set image3
+     *
+     * @param string $image3
+     *
+     * @return Item
+     */
+    public function setImage3($image3)
+    {
+        $this->image3 = $image3;
+
+        return $this;
+    }
+
+    /**
+     * Get image3
+     *
+     * @return string
+     */
+    public function getImage3()
+    {
+        return $this->image3;
+    }
+
+    /**
+     * Set dealerPrice
+     *
+     * @param string $dealerPrice
+     *
+     * @return Item
+     */
+    public function setDealerPrice($dealerPrice)
+    {
+        $this->dealerPrice = $dealerPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get dealerPrice
+     *
+     * @return string
+     */
+    public function getDealerPrice()
+    {
+        return $this->dealerPrice;
+    }
+
+    /**
+     * Set vehicles
+     *
+     * @param string $vehicles
+     *
+     * @return Item
+     */
+    public function setVehicles($vehicles)
+    {
+        $this->vehicles = $vehicles;
+
+        return $this;
+    }
+
+    /**
+     * Get vehicles
+     *
+     * @return string
+     */
+    public function getVehicles()
+    {
+        return $this->vehicles;
+    }
+
+    /**
+     * Set shopifyVariantId
+     *
+     * @param string $shopifyVariantId
+     *
+     * @return Item
+     */
+    public function setShopifyVariantId($shopifyVariantId)
+    {
+        $this->shopifyVariantId = $shopifyVariantId;
+
+        return $this;
+    }
+
+    /**
+     * Get shopifyVariantId
+     *
+     * @return string
+     */
+    public function getShopifyVariantId()
+    {
+        return $this->shopifyVariantId;
+    }
+
+    /**
+     * Set shopifyProductId
+     *
+     * @param string $shopifyProductId
+     *
+     * @return Item
+     */
+    public function setShopifyProductId($shopifyProductId)
+    {
+        $this->shopifyProductId = $shopifyProductId;
+
+        return $this;
+    }
+
+    /**
+     * Get shopifyProductId
+     *
+     * @return string
+     */
+    public function getShopifyProductId()
+    {
+        return $this->shopifyProductId;
+    }
+
+    /**
+     * Set length
+     *
+     * @param float $length
+     *
+     * @return Item
+     */
+    public function setLength($length)
+    {
+        $this->length = $length;
+
+        return $this;
+    }
+
+    /**
+     * Get length
+     *
+     * @return float
+     */
+    public function getLength()
+    {
+        return $this->length;
+    }
+
+    /**
+     * Set width
+     *
+     * @param float $width
+     *
+     * @return Item
+     */
+    public function setWidth($width)
+    {
+        $this->width = $width;
+
+        return $this;
+    }
+
+    /**
+     * Get width
+     *
+     * @return float
+     */
+    public function getWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * Set height
+     *
+     * @param float $height
+     *
+     * @return Item
+     */
+    public function setHeight($height)
+    {
+        $this->height = $height;
+
+        return $this;
+    }
+
+    /**
+     * Get height
+     *
+     * @return float
+     */
+    public function getHeight()
+    {
+        return $this->height;
+    }
+
+    /**
+     * Set weight
+     *
+     * @param float $weight
+     *
+     * @return Item
+     */
+    public function setWeight($weight)
+    {
+        $this->weight = $weight;
+
+        return $this;
+    }
+
+    /**
+     * Get weight
+     *
+     * @return float
+     */
+    public function getWeight()
+    {
+        return $this->weight;
+    }
+}
