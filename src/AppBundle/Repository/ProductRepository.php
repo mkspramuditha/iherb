@@ -15,7 +15,7 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
         $qb = $this->createQueryBuilder('p');
         $q  = $qb->select(array('p'))
             ->where(
-                $qb->expr()->gt('p.price', 0)
+                $qb->expr()->gt('p.stock', 0)
             )
             ->setMaxResults($limit)
             ->getQuery();
