@@ -14,7 +14,6 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
         $em = $this->getEntityManager();
         $qb = $em->createQueryBuilder();
         $q  = $qb->select(array('p'))
-            ->from('Product', 'p')
             ->where(
                 $qb->expr()->gt('p.price', 0)
             )
