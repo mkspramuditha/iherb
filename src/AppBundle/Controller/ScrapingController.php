@@ -74,13 +74,13 @@ class ScrapingController extends DefaultController
     public function test(){
 
         $products = $this->getRepository('Product')->findBy(array('title'=>null));
-//        $products = $this->getRepository('Product')->findBy(array('stock'=>0));
+//        $products = $this->getRepository('Product')->findBy(array('id'=>22692));
 //        var_dump(count($products));exit;
         foreach ($products as $product){
             try{
                 $this->scrapeProduct($product);
             }catch (\Exception $e){
-                var_dump($e->getMessage());exit;
+                var_dump($e->getMessage());
             }
 
         }
@@ -91,9 +91,11 @@ class ScrapingController extends DefaultController
         $client = new Client();
         var_dump($product->getUrl());
         $client->setHeader("x-requested-with","XMLHttpRequest");
+        $client->setHeader("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36");
         $crawler = $client->request("GET",$product->getUrl());
         $title = $crawler->filter('h1#name')->text();
         $quantities = $crawler->filter('select[name="qty"] > option');
+
         $description = $crawler->filter("div.product-overview > div > section > div.inner-content > div.item-row > div.row > div > div.row");
 
         $descriptionText = "";
@@ -102,11 +104,15 @@ class ScrapingController extends DefaultController
         $descriptionText.="<div class='row item-row'>".$description->eq(2)->html()."</div>";
         $descriptionText.="<div class='row item-row'>".$description->eq(3)->html()."</div>";
 
-        $table = $crawler->filter("div.supplement-facts-container")->html();
-
-        $descriptionText.="<div class='row item-row'>".$table."</div>";
+        try{
+            $table = $crawler->filter("div.supplement-facts-container")->html();
+            $descriptionText.="<div class='row item-row'>".$table."</div>";
+        }catch (\Exception $e){
+            var_dump($e->getMessage());
+        }
 
         $stockQuantity = 0;
+
         foreach ($quantities as $quantity){
             $stockQuantity = $quantity->nodeValue;
             var_dump($stockQuantity);
@@ -162,9 +168,14 @@ class ScrapingController extends DefaultController
         $products = $this->getRepository('Product')->findBy(array('shopifyProductId' => null));
 //        var_dump(count($products));exit;
         foreach ($products as $product) {
+
+            if($product->getStock() == 0 || $product->getTitle() == null || $product->getTitle() == ""){
+                continue;
+            }
+
             $productObj = array();
             $productObj['title'] = $product->getTitle();
-            $productObj['published'] = false;
+            $productObj['published'] = true;
 
             $variantObj = array();
             $images = array();
@@ -194,7 +205,12 @@ class ScrapingController extends DefaultController
             $productObj['variants'] = [$variantObj];
             $productObj['images'] = $images;
 
-            $this->addProductToShopify($productObj,$product);
+            try{
+                $this->addProductToShopify($productObj,$product);
+            }catch (\Exception $e){
+                var_dump($e->getMessage());
+            }
+
 
 
 
