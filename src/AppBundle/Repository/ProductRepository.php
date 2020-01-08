@@ -16,10 +16,12 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
         $q  = $qb->select(array('p'))
             ->where(
                 $qb->expr()->gt('p.stock', 0)
-            )->andWhere('p.shopifyProductId != :productId')
-            ->setParameter('productId',null)
+            )->andWhere(
+                $qb->expr()->isNull('p.shopifyProductId')
+            )
             ->setMaxResults($limit)
             ->getQuery();
+//        var_dump($q->getSQL());exit;
 
         return $q->getResult();
     }
