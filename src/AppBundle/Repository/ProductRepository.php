@@ -11,8 +11,8 @@ namespace AppBundle\Repository;
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
     public function getProductsToSync($limit){
-        $em = $this->getEntityManager();
-        $qb = $em->createQueryBuilder();
+
+        $qb = $em->createQueryBuilder('p');
         $q  = $qb->select(array('p'))
             ->where(
                 $qb->expr()->gt('p.price', 0)
