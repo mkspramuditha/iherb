@@ -165,8 +165,8 @@ class ScrapingController extends DefaultController
      */
     public function syncAction()
     {
-        $products = $this->getRepository('Product')->getProductsToSync(100);
-        var_dump(count($products));exit;
+        $products = $this->getRepository('Product')->getProductsToSync(1000);
+//        var_dump(count($products));exit;
         foreach ($products as $product) {
 
             if($product->getStock() == 0 || $product->getTitle() == null || $product->getTitle() == ""){
