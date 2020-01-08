@@ -165,7 +165,7 @@ class ScrapingController extends DefaultController
      */
     public function syncAction()
     {
-        $products = $this->getRepository('Product')->findBy(array('shopifyProductId' => null));
+        $products = $this->getRepository('Product')->getProductsToSync(100);
 //        var_dump(count($products));exit;
         foreach ($products as $product) {
 
