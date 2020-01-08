@@ -12,7 +12,7 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
     public function getProductsToSync($limit){
 
-        $qb = $em->createQueryBuilder('p');
+        $qb = $this->createQueryBuilder('p');
         $q  = $qb->select(array('p'))
             ->where(
                 $qb->expr()->gt('p.price', 0)
