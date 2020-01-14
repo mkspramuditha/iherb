@@ -120,6 +120,15 @@ class Product
      */
     private $shopifyVariantId;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="last_updated", type="datetime", nullable=true)
+     */
+    private $lastUpdated;
+
+
+
 
     /**
      * Get id
@@ -421,5 +430,53 @@ class Product
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * Set shopifyProductId
+     *
+     * @param string $shopifyProductId
+     *
+     * @return Product
+     */
+    public function setShopifyProductId($shopifyProductId)
+    {
+        $this->shopifyProductId = $shopifyProductId;
+
+        return $this;
+    }
+
+    /**
+     * Get shopifyProductId
+     *
+     * @return string
+     */
+    public function getShopifyProductId()
+    {
+        return $this->shopifyProductId;
+    }
+
+    /**
+     * Set shopifyVariantId
+     *
+     * @param string $shopifyVariantId
+     *
+     * @return Product
+     */
+    public function setShopifyVariantId($shopifyVariantId)
+    {
+        $this->shopifyVariantId = $shopifyVariantId;
+
+        return $this;
+    }
+
+    /**
+     * Get shopifyVariantId
+     *
+     * @return string
+     */
+    public function getShopifyVariantId()
+    {
+        return $this->shopifyVariantId;
     }
 }

@@ -25,4 +25,24 @@ class ProductRepository extends \Doctrine\ORM\EntityRepository
 
         return $q->getResult();
     }
+
+
+    public function getProductsToUpdateStock($limit){
+
+        $now = new \DateTime('now');
+        $now->modify("-1 day");
+
+        $qb = $this->createQueryBuilder('p');
+        $q  = $qb->select(array('p'))
+            ->where('p.lastUpdated < :last')
+            ->setParameter('last', $now, \Doctrine\DBAL\Types\Type::DATETIME)
+//            ->where(
+//                $qb->expr()->lt('p.lastUpdated', $now)
+//            )
+            ->setMaxResults($limit)
+            ->orderBy('p.lastUpdated','ASC')
+            ->getQuery();
+
+        return $q->getResult();
+    }
 }

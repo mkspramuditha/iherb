@@ -120,6 +120,15 @@ class Product
      */
     private $shopifyVariantId;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="last_updated", type="datetime", nullable=true)
+     */
+    private $lastUpdated;
+
+
+
 
     /**
      * Get id
@@ -469,5 +478,29 @@ class Product
     public function getShopifyVariantId()
     {
         return $this->shopifyVariantId;
+    }
+
+    /**
+     * Set lastUpdated
+     *
+     * @param \DateTime $lastUpdated
+     *
+     * @return Product
+     */
+    public function setLastUpdated($lastUpdated)
+    {
+        $this->lastUpdated = $lastUpdated;
+
+        return $this;
+    }
+
+    /**
+     * Get lastUpdated
+     *
+     * @return \DateTime
+     */
+    public function getLastUpdated()
+    {
+        return $this->lastUpdated;
     }
 }

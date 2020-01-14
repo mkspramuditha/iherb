@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Goutte\Client;
 
@@ -72,24 +73,63 @@ class ScrapingController extends DefaultController
      * @Route("/test",name="test")
      */
     public function test(){
-
-        $products = $this->getRepository('Product')->findBy(array('title'=>null));
-//        $products = $this->getRepository('Product')->findBy(array('id'=>22692));
-//        var_dump(count($products));exit;
+        $em = $this->getDoctrine()->getManager();
+        $products = $this->getRepository('Product')->findBy(array());
+        $dateTime = new \DateTime('2020-01-01');
         foreach ($products as $product){
+            $product->setLastUpdated($dateTime);
+            $em->persist($product);
+        }
+
+        $em->flush();
+        var_dump("updated");
+        exit;
+////        $products = $this->getRepository('Product')->findBy(array('id'=>22692));
+////        var_dump(count($products));exit;
+//        foreach ($products as $product){
+//            try{
+//                $this->scrapeProduct($product);
+//            }catch (\Exception $e){
+//                var_dump($e->getMessage());
+//            }
+//
+//        }
+//        exit;
+    }
+
+    /**
+     * @Route("/updateStocks", name="updateStocks")
+     */
+    public function updateStockAction(Request $request){
+        $products = $this->getRepository('Product')->getProductsToUpdateStock(10);
+//        $products = $this->getRepository('Product')->findBy(array("id"=>35));
+        var_dump(count($products));
+        foreach ($products as $product){
+            $oldStock = $product->getStock();
+            $oldPrice = $product->getPrice();
             try{
                 $this->scrapeProduct($product);
+                var_dump($product->getId());
+                if($product->getPrice() != $oldPrice || $product->getStock() != $oldStock){
+
+                    $this->updateProductInShopify($product,$product->getShopifyProductId());
+
+
+                }else{
+                    $product->setLastUpdated(new \DateTime());
+                    $this->insert($product);
+                }
             }catch (\Exception $e){
-                var_dump($e->getMessage());
+                var_dump("global error - ".$e->getMessage());
             }
 
         }
         exit;
     }
 
-    private function scrapeProduct(Product $product){
+    private function scrapeProduct(Product &$product){
         $client = new Client();
-        var_dump($product->getUrl());
+//        var_dump($product->getUrl());
         $client->setHeader("x-requested-with","XMLHttpRequest");
         $client->setHeader("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36");
         $crawler = $client->request("GET",$product->getUrl());
@@ -108,14 +148,13 @@ class ScrapingController extends DefaultController
             $table = $crawler->filter("div.supplement-facts-container")->html();
             $descriptionText.="<div class='row item-row'>".$table."</div>";
         }catch (\Exception $e){
-            var_dump($e->getMessage());
+            var_dump("table not found - ".$e->getMessage());
         }
 
         $stockQuantity = 0;
 
         foreach ($quantities as $quantity){
             $stockQuantity = $quantity->nodeValue;
-            var_dump($stockQuantity);
         }
 
         $stockQuantity = (int) $stockQuantity;
@@ -256,35 +295,75 @@ class ScrapingController extends DefaultController
 
     private function updateProductInShopify($product, $productId){
 
-        $curl = curl_init();
+        try{
+            $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://f8d419916ee88328f8cf284908c5ee85:cc99e1810cf828f55a9175bcbebe94a6@deep-discount-center.myshopify.com/admin/api/2019-10/products/".$productId.".json",
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "PUT",
-            CURLOPT_POSTFIELDS => json_encode(array('product' => $product)),
-            CURLOPT_HTTPHEADER => array(
-                "Content-Type: application/json"
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => "https://f8d419916ee88328f8cf284908c5ee85:cc99e1810cf828f55a9175bcbebe94a6@deep-discount-center.myshopify.com/admin/api/2019-10/products/".$productId.".json",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "PUT",
+                CURLOPT_POSTFIELDS => json_encode(array('product' => $this->converProductToJson($product))),
+                CURLOPT_HTTPHEADER => array(
+                    "Content-Type: application/json"
 //                "Authorization: Basic NzdmYWY1Y2M2ZDBiZmE0ODM2NDIxODc5NDcwNWJjMGI6NzNlMDFiYjUyYjdmMzhjYzAyOTRmMDRlOGZkZDYxZjI="
-            ),
-        ));
+                ),
+            ));
 
-        $response = curl_exec($curl);
-        var_dump($response);exit;
-        curl_close($curl);
-        $response = json_decode($response, true);
-        $productId = $response['product']['id'];
-        $variantId = $response['product']['variants'][0]['id'];
-        $product->setShopifyProductId($productId);
-        $product->setShopifyVariantId($variantId);
-        $this->insert($product);
-        var_dump($productId);
-        var_dump($variantId);
-        exit;
+            $response = curl_exec($curl);
+            curl_close($curl);
+            $response = json_decode($response, true);
+            $productId = $response['product']['id'];
+            $variantId = $response['product']['variants'][0]['id'];
+            $product->setShopifyProductId($productId);
+            $product->setShopifyVariantId($variantId);
+            $product->setLastUpdated(new \DateTime());
+            $this->insert($product);
+//            exit;
+        }catch (\Exception $e){
+            var_dump($e->getMessage());
+        }
+
+    }
+
+
+    private function converProductToJson(Product $product){
+        $productObj = array();
+        $productObj['title'] = $product->getTitle();
+        $productObj['published'] = true;
+
+        $variantObj = array();
+        $images = array();
+
+        $productObj['product_type'] = $product->getCategory();
+
+        $variantObj['price'] = $product->getPrice();
+        $variantObj['sku'] = $product->getSku();
+        $weight = explode(" ",$product->getWeight());
+        $variantObj['weight'] = $weight[0];
+        $variantObj['weight_unit'] = 'lb';
+        $variantObj['barcode'] = $product->getUpc();
+        $variantObj['inventory_quantity'] = $product->getStock();
+//            $variantObj['inventory_quantity'] = ;
+        $variantObj['inventory_management'] = 'shopify';
+        foreach ($product->getImages() as $image){
+            $images[] =  array('src'=>$image);
+        }
+
+
+        $variantObj['title'] = $product->getTitle();
+        $productObj['vendor'] = $product->getBrand();
+
+
+
+        $productObj['body_html'] = $product->getDescription();
+        $productObj['variants'] = [$variantObj];
+        $productObj['images'] = $images;
+
+        return $productObj;
     }
 }
